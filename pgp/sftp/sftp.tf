@@ -44,3 +44,22 @@ resource "aws_transfer_server" "transfer_server" {
 
   tags = var.tag_map
 }
+
+## Decrypt WorkFlow
+resource "aws_transfer_workflow" "decrypt_workflow" {
+  steps {
+       type = "DECRYPT"
+    decrypt_step_details {
+      type = "DECRYPT"
+      name = "decrypt"
+      source_file_location = "${original.file}"
+      overwrite_existing = true
+      destination_file_location {
+        s3_file_location {
+          bucket = aws.aws_s3_bucket.sftp_bucket.bucket
+          key = "decrypted.${file.name}"
+        }
+      }
+    }
+  }
+}
